@@ -6,7 +6,9 @@
         class="text-uppercase text-center text-black my-10"
         style="letter-spacing: 20px"
       >
-        blackjack calculater
+        <v-app-bar style="position: fixed">
+          <v-col cols="12" class="text-center"> blackjack calculater </v-col>
+        </v-app-bar>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
         <v-row>
@@ -20,6 +22,7 @@
                 ref="valueReset"
                 v-model="value"
                 @keyup.enter="valueCount(value)"
+                clearable
               ></v-text-field>
             </v-col>
           </v-col>
@@ -33,6 +36,7 @@
                 ref="valueRivalReset"
                 v-model="valueRival"
                 @keyup.enter="valueCountRival(valueRival)"
+                clearable
               ></v-text-field>
             </v-col>
           </v-col>
@@ -41,14 +45,16 @@
           <v-col cols="12" class="text-center">
             <v-btn width="40%">
               <v-row>
-                <v-col class="text-overline"> hesapla </v-col>
+                <v-col class="text-overline" @click="calculate()">
+                  hesapla
+                </v-col>
               </v-row>
             </v-btn>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-card height="330">
+            <v-card height="100%">
               <v-row class="mx-2 mt-2">
                 <v-col cols="6">
                   <v-col cols="12" class="text-center text-overline">
@@ -70,6 +76,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
+                <v-col cols="12" class="text-center text-overline">Sonuc</v-col>
               </v-row>
             </v-card>
           </v-col>
@@ -86,7 +93,7 @@
               kalan kart sayısı</v-col
             >
             <v-col
-              cols="6"
+              cols="12"
               sm="6"
               md="4"
               lg="3"
@@ -120,7 +127,7 @@ export default {
       value: "" as string,
       valueRival: "" as string,
       cards: [
-        { item: "A", count: 4, numbValue: 1 },
+        { item: "A", count: 4, numbValue: 1 || 11 },
         { item: "2", count: 4, numbValue: 2 },
         { item: "3", count: 4, numbValue: 3 },
         { item: "4", count: 4, numbValue: 4 },
@@ -148,9 +155,6 @@ export default {
             this.valueData.push(x.numbValue);
           }
         });
-      console.log(this.valueRivalData);
-      console.log(this.valueData);
-
       this.$refs.valueReset.reset();
     },
     valueCountRival(value: string) {
@@ -165,6 +169,17 @@ export default {
           }
         });
       this.$refs.valueRivalReset.reset();
+    },
+    calculate(): any {
+      let valueTotal: number = 0;
+      let valueRivalTotal: number = 0;
+      this.valueData.map((x: number) => (valueTotal += x));
+      this.valueRivalData.map((x: number) => (valueRivalTotal += x));
+      console.log(valueTotal);
+      this.valueData
+        .filter((x: any) => x.numbValue + valueTotal == 21)
+        .map((x: any) => console.log(x));
+      console.log(valueRivalTotal);
     },
   },
 };
