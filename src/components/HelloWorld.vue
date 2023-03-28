@@ -76,7 +76,88 @@
                     </v-col>
                   </v-row>
                 </v-col>
-                <v-col cols="12" class="text-center text-overline">Sonuc</v-col>
+                <v-col cols="12" class="text-center text-overline">
+                  <v-row class="text-overline">
+                    <v-col v-show="value21 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >21 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ possiblityValue21 }}</v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col v-show="value20 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >20 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ value20 }}</v-col>
+                      </v-row>
+                    </v-col>
+
+                    <v-col v-show="value19 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >19 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ value19 }}</v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col v-show="value18 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >18 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ value18 }}</v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col v-show="value17 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >17 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ value17 }}</v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col v-show="value16 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >16 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ value16 }}</v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col v-show="value16 != 0" cols="6">
+                      <v-row>
+                        <v-col
+                          cols="6"
+                          class="text-uppercase"
+                          style="letter-spacing: 5px"
+                          >16 gelme olasılığı:</v-col
+                        >
+                        <v-col cols="6">%{{ value16 }}</v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-col>
               </v-row>
             </v-card>
           </v-col>
@@ -122,12 +203,20 @@
 export default {
   data() {
     return {
+      lastValue: "" as String,
+      totalCount: 0 as any,
+      value21: 0 as any,
+      value20: 0 as any,
+      value19: 0 as any,
+      value18: 0 as any,
+      value17: 0 as any,
+      value16: 0 as any,
       valueData: [] as any,
       valueRivalData: [] as any,
       value: "" as string,
       valueRival: "" as string,
       cards: [
-        { item: "A", count: 4, numbValue: 1 || 11 },
+        { item: "A", count: 4, numbValue: 1 },
         { item: "2", count: 4, numbValue: 2 },
         { item: "3", count: 4, numbValue: 3 },
         { item: "4", count: 4, numbValue: 4 },
@@ -145,17 +234,45 @@ export default {
   },
   methods: {
     valueCount(value: string) {
-      this.cards
-        .filter((x: any) => x.item == value)
-        .map((x: any) => {
-          if (x.count == 0) {
-            x.count == 0;
-          } else {
-            x.count--;
-            this.valueData.push(x.numbValue);
-          }
-        });
-      this.$refs.valueReset.reset();
+      if (value !== "A") {
+        this.cards
+          .filter((x: any) => x.item == value)
+          .map((x: any) => {
+            if (x.count == 0) {
+              x.count == 0;
+            } else {
+              x.count--;
+              this.lastValue = x.item;
+              this.valueData.push(x.numbValue);
+            }
+          });
+      } else if (value == "A") {
+        this.cards
+          .filter((x: any) => x.item == value)
+          .map((x: any) => {
+            if (x.count == 0) {
+              x.count = 0;
+            } else {
+              x.count--;
+              if (this.lastValue == "10" || "K" || "Q" || "J" || "9") {
+                this.valueData.push(11);
+                alert("BLACKJACK!! TEBRİKLERR");
+              } else if (
+                this.lastValue == "A" ||
+                "2" ||
+                "3" ||
+                "4" ||
+                "5" ||
+                "6" ||
+                "7" ||
+                "8"
+              ) {
+                this.valueData.push(1);
+              }
+            }
+          });
+      }
+      (this.$refs.valueReset as InstanceType<any>).reset();
     },
     valueCountRival(value: string) {
       this.cards
@@ -168,18 +285,99 @@ export default {
             this.valueRivalData.push(x.numbValue);
           }
         });
-      this.$refs.valueRivalReset.reset();
+      (this.$refs.valueRivalReset as InstanceType<any>).reset();
     },
     calculate(): any {
       let valueTotal: number = 0;
       let valueRivalTotal: number = 0;
       this.valueData.map((x: number) => (valueTotal += x));
       this.valueRivalData.map((x: number) => (valueRivalTotal += x));
-      console.log(valueTotal);
-      this.valueData
-        .filter((x: any) => x.numbValue + valueTotal == 21)
-        .map((x: any) => console.log(x));
-      console.log(valueRivalTotal);
+      this.cards.map((x: any) => (this.totalCount += x.count));
+      if (valueTotal == 9 || 10) {
+        this.cards
+          .filter((x: any) => x.item == "A")
+          .map((x: any) => (x.numbValue = 11));
+      } else {
+        this.cards
+          .filter((x: any) => x.item == "A")
+          .map((x: any) => (x.numbValue = 1));
+      }
+
+      this.cards
+        .filter((x: any) => x.numbValue == 21 - valueTotal)
+        .map((x: any) => {
+          this.value21 += x.count;
+          const possiblityValue21 = Math.ceil(
+            (this.value21 / this.totalCount) * 100
+          );
+        }),
+        this.cards
+          .filter((x: any) => x.numbValue == 20 - valueTotal)
+          .map((x: any) => {
+            this.value20 += x.count;
+            const possiblityValue20 = Math.ceil(
+              (this.value20 / this.totalCount) * 100
+            );
+          }),
+        this.cards
+          .filter((x: any) => x.numbValue == 19 - valueTotal)
+          .map((x: any) => {
+            this.value19 += x.count;
+            const possiblityValue19 = Math.ceil(
+              (this.value19 / this.totalCount) * 100
+            );
+          }),
+        this.cards
+          .filter((x: any) => x.numbValue == 18 - valueTotal)
+          .map((x: any) => {
+            this.value18 += x.count;
+            const possiblityValue18 = Math.ceil(
+              (this.value18 / this.totalCount) * 100
+            );
+          }),
+        this.cards
+          .filter((x: any) => x.numbValue == 17 - valueTotal)
+          .map((x: any) => {
+            this.value17 += x.count;
+            const possiblityValue17 = Math.ceil(
+              (this.value17 / this.totalCount) * 100
+            );
+          }),
+        this.cards
+          .filter((x: any) => x.numbValue == 16 - valueTotal)
+          .map((x: any) => {
+            this.value16 += x.count;
+            const possiblityValue16 = Math.ceil(
+              (this.value16 / this.totalCount) * 100
+            );
+          });
+      const possiblityValue21_19 = Math.ceil(
+        ((this.value21 + this.value20 + this.value19) / this.totalCount) * 100
+      );
+      const possiblityValue21_18 = Math.ceil(
+        ((this.value21 + this.value20 + this.value19 + this.value18) /
+          this.totalCount) *
+          100
+      );
+      const possiblityValue21_17 = Math.ceil(
+        ((this.value21 +
+          this.value20 +
+          this.value19 +
+          this.value18 +
+          this.value17) /
+          this.totalCount) *
+          100
+      );
+      const possiblityValue21_16 = Math.ceil(
+        ((this.value21 +
+          this.value20 +
+          this.value19 +
+          this.value18 +
+          this.value17 +
+          this.value16) /
+          this.totalCount) *
+          100
+      );
     },
   },
 };
