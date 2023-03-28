@@ -285,7 +285,6 @@ export default {
             }
           });
       }
-      this.calculate();
       (this.$refs.valueReset as InstanceType<any>).reset();
     },
     valueCountRival(value: string) {
@@ -300,7 +299,6 @@ export default {
             this.valueRivalData.push(x.numbValue);
           }
         });
-      this.calculate();
       (this.$refs.valueRivalReset as InstanceType<any>).reset();
     },
     calculate(): any {
@@ -308,18 +306,20 @@ export default {
       this.valueRivalTotal = 0;
       this.valueData.map((x: number) => (this.valueTotal += x));
       this.valueRivalData.map((x: number) => (this.valueRivalTotal += x));
+      this.totalCount = 0;
       this.cards.map((x: any) => (this.totalCount += x.count));
       for (let i = 0; i < 6; i++) {
+        this.resultValue[i].count = 0;
         this.cards
           .filter(
             (x: any) =>
               x.numbValue == this.resultValue[i].value - this.valueTotal
           )
           .map((x: any) => {
-            this.resultValue[i].count = x.count;
-            this.resultValue[i].possiblity = ((
-              this.resultValue[i].count / this.totalCount
-            )*100).toFixed(0);
+            this.resultValue[i].count += x.count;
+            this.resultValue[i].possiblity = Math.ceil(
+              (this.resultValue[i].count / this.totalCount) * 100
+            );
           });
       }
       for (let n = 6; n < this.resultValue.length; n++) {
@@ -350,6 +350,12 @@ export default {
             alert("kaybettin");
           }
         }
+      },
+      deep: true,
+    },
+    totalCount: {
+      handler(newValue, oldValue) {
+        console.log(newValue, oldValue);
       },
       deep: true,
     },
