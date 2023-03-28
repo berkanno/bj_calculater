@@ -78,82 +78,15 @@
                 </v-col>
                 <v-col cols="12" class="text-center text-overline">
                   <v-row class="text-overline">
-                    <v-col v-show="value21 != 0" cols="6">
-                      <v-row>
+                    <v-col cols="6" v-for="item in resultValue" :key="item">
+                      <v-row v-show="item.possiblity != 0">
                         <v-col
                           cols="6"
                           class="text-uppercase"
                           style="letter-spacing: 5px"
-                          >21 gelme olasılığı:</v-col
+                          >{{ item.title }}</v-col
                         >
-                        <v-col cols="6">%{{ possiblityValue21 }}</v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col v-show="value20 != 0" cols="6">
-                      <v-row>
-                        <v-col
-                          cols="6"
-                          class="text-uppercase"
-                          style="letter-spacing: 5px"
-                          >20 gelme olasılığı:</v-col
-                        >
-                        <v-col cols="6">%{{ value20 }}</v-col>
-                      </v-row>
-                    </v-col>
-
-                    <v-col v-show="value19 != 0" cols="6">
-                      <v-row>
-                        <v-col
-                          cols="6"
-                          class="text-uppercase"
-                          style="letter-spacing: 5px"
-                          >19 gelme olasılığı:</v-col
-                        >
-                        <v-col cols="6">%{{ value19 }}</v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col v-show="value18 != 0" cols="6">
-                      <v-row>
-                        <v-col
-                          cols="6"
-                          class="text-uppercase"
-                          style="letter-spacing: 5px"
-                          >18 gelme olasılığı:</v-col
-                        >
-                        <v-col cols="6">%{{ value18 }}</v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col v-show="value17 != 0" cols="6">
-                      <v-row>
-                        <v-col
-                          cols="6"
-                          class="text-uppercase"
-                          style="letter-spacing: 5px"
-                          >17 gelme olasılığı:</v-col
-                        >
-                        <v-col cols="6">%{{ value17 }}</v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col v-show="value16 != 0" cols="6">
-                      <v-row>
-                        <v-col
-                          cols="6"
-                          class="text-uppercase"
-                          style="letter-spacing: 5px"
-                          >16 gelme olasılığı:</v-col
-                        >
-                        <v-col cols="6">%{{ value16 }}</v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col v-show="value16 != 0" cols="6">
-                      <v-row>
-                        <v-col
-                          cols="6"
-                          class="text-uppercase"
-                          style="letter-spacing: 5px"
-                          >16 gelme olasılığı:</v-col
-                        >
-                        <v-col cols="6">%{{ value16 }}</v-col>
+                        <v-col cols="6">% {{ item.possiblity }}</v-col>
                       </v-row>
                     </v-col>
                   </v-row>
@@ -200,17 +133,80 @@
 </template>
 
 <script lang="ts">
+import { stringify } from "querystring";
 export default {
   data() {
     return {
       lastValue: "" as String,
       totalCount: 0 as any,
-      value21: 0 as any,
-      value20: 0 as any,
-      value19: 0 as any,
-      value18: 0 as any,
-      value17: 0 as any,
-      value16: 0 as any,
+      resultValue: [
+        {
+          title: "21 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 21 as any,
+        },
+        {
+          title: "20 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 20 as any,
+        },
+        {
+          title: "19 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 19 as any,
+        },
+        {
+          title: "18 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 18 as any,
+        },
+        {
+          title: "17 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 17 as any,
+        },
+        {
+          title: "16 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 16 as any,
+        },
+        {
+          title: "21_20 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 2 as any,
+        },
+        {
+          title: "21_19 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 3 as any,
+        },
+        {
+          title: "21_18 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 4 as any,
+        },
+        {
+          title: "21_17 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 5 as any,
+        },
+        {
+          title: "21_16 gelme olasılığı",
+          count: 0 as any,
+          possiblity: 0 as any,
+          value: 6 as any,
+        },
+      ] as any,
       valueData: [] as any,
       valueRivalData: [] as any,
       value: "" as string,
@@ -235,6 +231,7 @@ export default {
   methods: {
     valueCount(value: string) {
       if (value !== "A") {
+        console.log(typeof value);
         this.cards
           .filter((x: any) => x.item == value)
           .map((x: any) => {
@@ -254,19 +251,11 @@ export default {
               x.count = 0;
             } else {
               x.count--;
-              if (this.lastValue == "10" || "K" || "Q" || "J" || "9") {
+              if (this.lastValue == "10") {
+                console.log(x.count);
                 this.valueData.push(11);
-                alert("BLACKJACK!! TEBRİKLERR");
-              } else if (
-                this.lastValue == "A" ||
-                "2" ||
-                "3" ||
-                "4" ||
-                "5" ||
-                "6" ||
-                "7" ||
-                "8"
-              ) {
+              } else if (this.lastValue == String(2)) {
+                console.log("çalı");
                 this.valueData.push(1);
               }
             }
@@ -288,6 +277,7 @@ export default {
       (this.$refs.valueRivalReset as InstanceType<any>).reset();
     },
     calculate(): any {
+      console.log("çalıştı");
       let valueTotal: number = 0;
       let valueRivalTotal: number = 0;
       this.valueData.map((x: number) => (valueTotal += x));
@@ -302,82 +292,28 @@ export default {
           .filter((x: any) => x.item == "A")
           .map((x: any) => (x.numbValue = 1));
       }
-
-      this.cards
-        .filter((x: any) => x.numbValue == 21 - valueTotal)
-        .map((x: any) => {
-          this.value21 += x.count;
-          const possiblityValue21 = Math.ceil(
-            (this.value21 / this.totalCount) * 100
-          );
-        }),
+      for (let i = 0; i < 6; i++) {
         this.cards
-          .filter((x: any) => x.numbValue == 20 - valueTotal)
+          .filter(
+            (x: any) => x.numbValue == this.resultValue[i].value - valueTotal
+          )
           .map((x: any) => {
-            this.value20 += x.count;
-            const possiblityValue20 = Math.ceil(
-              (this.value20 / this.totalCount) * 100
-            );
-          }),
-        this.cards
-          .filter((x: any) => x.numbValue == 19 - valueTotal)
-          .map((x: any) => {
-            this.value19 += x.count;
-            const possiblityValue19 = Math.ceil(
-              (this.value19 / this.totalCount) * 100
-            );
-          }),
-        this.cards
-          .filter((x: any) => x.numbValue == 18 - valueTotal)
-          .map((x: any) => {
-            this.value18 += x.count;
-            const possiblityValue18 = Math.ceil(
-              (this.value18 / this.totalCount) * 100
-            );
-          }),
-        this.cards
-          .filter((x: any) => x.numbValue == 17 - valueTotal)
-          .map((x: any) => {
-            this.value17 += x.count;
-            const possiblityValue17 = Math.ceil(
-              (this.value17 / this.totalCount) * 100
-            );
-          }),
-        this.cards
-          .filter((x: any) => x.numbValue == 16 - valueTotal)
-          .map((x: any) => {
-            this.value16 += x.count;
-            const possiblityValue16 = Math.ceil(
-              (this.value16 / this.totalCount) * 100
+            this.resultValue[i].count = x.count;
+            this.resultValue[i].possiblity = Math.ceil(
+              (this.resultValue[i].count / this.totalCount) * 100
             );
           });
-      const possiblityValue21_19 = Math.ceil(
-        ((this.value21 + this.value20 + this.value19) / this.totalCount) * 100
-      );
-      const possiblityValue21_18 = Math.ceil(
-        ((this.value21 + this.value20 + this.value19 + this.value18) /
-          this.totalCount) *
-          100
-      );
-      const possiblityValue21_17 = Math.ceil(
-        ((this.value21 +
-          this.value20 +
-          this.value19 +
-          this.value18 +
-          this.value17) /
-          this.totalCount) *
-          100
-      );
-      const possiblityValue21_16 = Math.ceil(
-        ((this.value21 +
-          this.value20 +
-          this.value19 +
-          this.value18 +
-          this.value17 +
-          this.value16) /
-          this.totalCount) *
-          100
-      );
+      }
+      for (let n = 6; n < this.resultValue.length; n++) {
+        for (let i = 0; i < this.resultValue[n].value; i++) {
+          this.resultValue[n].count += this.resultValue[i].count;
+        }
+        this.resultValue[n].possiblity = Math.ceil(
+          (this.resultValue[n].count / this.totalCount) * 100
+        );
+      }
+
+      console.log(this.resultValue);
     },
   },
 };
