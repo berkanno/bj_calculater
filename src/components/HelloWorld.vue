@@ -317,9 +317,9 @@ export default {
           )
           .map((x: any) => {
             this.resultValue[i].count = x.count;
-            this.resultValue[i].possiblity = Math.ceil(
-              (this.resultValue[i].count / this.totalCount) * 100
-            );
+            this.resultValue[i].possiblity = ((
+              this.resultValue[i].count / this.totalCount
+            )*100).toFixed(0);
           });
       }
       for (let n = 6; n < this.resultValue.length; n++) {
