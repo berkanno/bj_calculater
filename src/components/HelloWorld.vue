@@ -77,7 +77,13 @@
                   </v-row>
                 </v-col>
                 <v-col cols="12" class="text-center text-overline">
-                  <v-row class="text-overline">
+                  <v-row class="text-overline d-flex justify-center">
+                    <v-col
+                      cols="12"
+                      class="text-uppercase text-center"
+                      style="letter-spacing: 5px"
+                      >sonuc</v-col
+                    >
                     <v-col cols="6" v-for="item in resultValue" :key="item">
                       <v-row v-show="item.possiblity != 0">
                         <v-col
@@ -86,7 +92,11 @@
                           style="letter-spacing: 5px"
                           >{{ item.title }}</v-col
                         >
-                        <v-col cols="6">% {{ item.possiblity }}</v-col>
+                        <v-col
+                          cols="6"
+                          class="d-flex align-center justify-center"
+                          >% {{ item.possiblity }}</v-col
+                        >
                       </v-row>
                     </v-col>
                   </v-row>
@@ -133,12 +143,13 @@
 </template>
 
 <script lang="ts">
-import { stringify } from "querystring";
 export default {
   data() {
     return {
       lastValue: "" as String,
       totalCount: 0 as any,
+      valueTotal: 0 as any,
+      valueRivalTotal: 0 as any,
       resultValue: [
         {
           title: "21 gelme olasılığı",
@@ -231,7 +242,6 @@ export default {
   methods: {
     valueCount(value: string) {
       if (value !== "A") {
-        console.log(typeof value);
         this.cards
           .filter((x: any) => x.item == value)
           .map((x: any) => {
@@ -251,19 +261,35 @@ export default {
               x.count = 0;
             } else {
               x.count--;
-              if (this.lastValue == "10") {
-                console.log(x.count);
+              if (
+                this.lastValue == String(9) ||
+                this.lastValue == String(10) ||
+                this.lastValue == "K" ||
+                this.lastValue == "J" ||
+                this.lastValue == "Q" ||
+                this.lastValue == ""
+              ) {
                 this.valueData.push(11);
-              } else if (this.lastValue == String(2)) {
-                console.log("çalı");
+              } else if (
+                this.lastValue == "A" ||
+                this.lastValue == String(2) ||
+                this.lastValue == String(3) ||
+                this.lastValue == String(4) ||
+                this.lastValue == String(5) ||
+                this.lastValue == String(6) ||
+                this.lastValue == String(7) ||
+                this.lastValue == String(8)
+              ) {
                 this.valueData.push(1);
               }
             }
           });
       }
+      this.calculate();
       (this.$refs.valueReset as InstanceType<any>).reset();
     },
     valueCountRival(value: string) {
+      this.lastValue = "2";
       this.cards
         .filter((x: any) => x.item == value)
         .map((x: any) => {
@@ -274,28 +300,20 @@ export default {
             this.valueRivalData.push(x.numbValue);
           }
         });
+      this.calculate();
       (this.$refs.valueRivalReset as InstanceType<any>).reset();
     },
     calculate(): any {
-      console.log("çalıştı");
-      let valueTotal: number = 0;
-      let valueRivalTotal: number = 0;
-      this.valueData.map((x: number) => (valueTotal += x));
-      this.valueRivalData.map((x: number) => (valueRivalTotal += x));
+      this.valueTotal = 0;
+      this.valueRivalTotal = 0;
+      this.valueData.map((x: number) => (this.valueTotal += x));
+      this.valueRivalData.map((x: number) => (this.valueRivalTotal += x));
       this.cards.map((x: any) => (this.totalCount += x.count));
-      if (valueTotal == 9 || 10) {
-        this.cards
-          .filter((x: any) => x.item == "A")
-          .map((x: any) => (x.numbValue = 11));
-      } else {
-        this.cards
-          .filter((x: any) => x.item == "A")
-          .map((x: any) => (x.numbValue = 1));
-      }
       for (let i = 0; i < 6; i++) {
         this.cards
           .filter(
-            (x: any) => x.numbValue == this.resultValue[i].value - valueTotal
+            (x: any) =>
+              x.numbValue == this.resultValue[i].value - this.valueTotal
           )
           .map((x: any) => {
             this.resultValue[i].count = x.count;
@@ -312,8 +330,28 @@ export default {
           (this.resultValue[n].count / this.totalCount) * 100
         );
       }
-
-      console.log(this.resultValue);
+    },
+  },
+  watch: {
+    valueTotal: {
+      handler(newValue, oldValue) {
+        if (newValue == 21) {
+          if (this.valueRivalTotal != 21) {
+            alert("Kazandınız. BLACKJACK :))");
+          } else if (this.valueRivalTotal == 21) {
+            alert("berabere");
+            window.location.reload();
+          }
+        } else if (newValue > 21) {
+          if (this.valueRivalTotal > 21) {
+            alert("Berabere");
+            window.location.reload();
+          } else if (this.valueRivalTotal < 22) {
+            alert("kaybettin");
+          }
+        }
+      },
+      deep: true,
     },
   },
 };
