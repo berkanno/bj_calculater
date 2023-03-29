@@ -11,8 +11,8 @@
         </v-app-bar>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
-        <v-row>
-          <v-col cols="6">
+        <v-row v-show="calculateShow">
+          <v-col cols="6" class="text-center">
             <v-col cols="12" class="text-center text-overline"
               >alınan kartlar(ben)</v-col
             >
@@ -25,8 +25,13 @@
                 clearable
               ></v-text-field>
             </v-col>
+            <v-col cols="12">
+              <v-btn class="text-uppercase" @click="valueCount(value)"
+                >kaydet</v-btn
+              >
+            </v-col>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="6" class="text-center">
             <v-col cols="12" class="text-center text-overline"
               >alınan kartlar(o)</v-col
             >
@@ -39,9 +44,14 @@
                 clearable
               ></v-text-field>
             </v-col>
+            <v-col cols="12">
+              <v-btn class="text-uppercase" @click="valueCountRival(valueRival)"
+                >kaydet</v-btn
+              >
+            </v-col>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row v-show="calculateShow">
           <v-col cols="12" class="text-center">
             <v-btn width="40%">
               <v-row>
@@ -136,6 +146,17 @@
               </v-card>
             </v-col>
           </v-row>
+          <v-row v-show="!calculateShow">
+            <v-col cols="12">
+              <v-card
+                height="200"
+                class="d-flex align-center justify-center"
+                flat
+              >
+                <v-btn @click="tryAgain()"> Yeniden Hesapla </v-btn>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -146,6 +167,7 @@
 export default {
   data() {
     return {
+      calculateShow: true as Boolean,
       lastValue: "" as String,
       totalCount: 0 as any,
       valueTotal: 0 as any,
@@ -323,6 +345,7 @@ export default {
           });
       }
       for (let n = 6; n < this.resultValue.length; n++) {
+        this.resultValue[n].count = 0;
         for (let i = 0; i < this.resultValue[n].value; i++) {
           this.resultValue[n].count += this.resultValue[i].count;
         }
@@ -330,6 +353,17 @@ export default {
           (this.resultValue[n].count / this.totalCount) * 100
         );
       }
+      this.calculateShow = false;
+    },
+    tryAgain(): any {
+      this.cards.map((x: any) => (x.count = 4));
+      this.resultValue.map((x: any) => {
+        x.count = 0;
+        x.possiblity = 0;
+      });
+      this.valueData = [];
+      this.valueRivalData = [];
+      this.calculateShow = true;
     },
   },
   watch: {
